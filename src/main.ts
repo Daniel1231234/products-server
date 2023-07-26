@@ -6,7 +6,11 @@ const port = 3030;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: false
+    cors: {
+      origin: 'http://localhost:5173',
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    }
   });
   app.setGlobalPrefix('api');
   await app.listen(port);

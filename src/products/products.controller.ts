@@ -1,19 +1,29 @@
-import { Controller, Logger, Get, Post, Put, Delete, Body, Param, Req, Res, HttpException, HttpStatus } from "@nestjs/common";
+import { Controller, Logger, Get, Post, Put, Delete, Body, Param, Req, Res, HttpException, HttpStatus, UsePipes, ValidationPipe } from "@nestjs/common";
 import { Product } from "./entities/product.entity";
 import { ProductService } from "./products.service";
 import { Query } from "mongoose";
 
 @Controller("product")
 export class ProductController {
-    private readonly logger = new Logger(ProductController.name);
 
     constructor(private readonly productService: ProductService) { }
 
     @Get()
-    async getAllProducts(@Req() req: any, @Res() res: any): Promise<Product[]> {
+    @UsePipes(new ValidationPipe())
+    async GetAllProducts(@Req() req: any, @Res() res: any): Promise<Product[]> {
         try {
-            const products = await this.productService.searchProducts(req.query);
+            const products = await this.productService.getAllProducts(req.query);
             return res.status(HttpStatus.OK).json(products);
+        } catch (error) {
+            throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Get("/length")
+    async GetTotalPageCount(@Req() req: any, @Res() res: any): Promise<number> {
+        try {
+            const totalPages = await this.productService.getTotalPageCount()
+            return res.status(HttpStatus.OK).json(totalPages)
         } catch (error) {
             throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -25,7 +35,7 @@ export class ProductController {
             const product = await this.productService.getProduct(id);
             return res.status(HttpStatus.OK).json(product);
         } catch (error) {
-            throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
