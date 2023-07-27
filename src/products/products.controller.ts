@@ -1,7 +1,7 @@
-import { Controller, Logger, Get, Post, Put, Delete, Body, Param, Req, Res, HttpException, HttpStatus, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Body, Param, Req, Res, HttpException, HttpStatus, UsePipes, ValidationPipe } from "@nestjs/common";
 import { Product } from "./entities/product.entity";
 import { ProductService } from "./products.service";
-import { Query } from "mongoose";
+
 
 @Controller("product")
 export class ProductController {
